@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZSafetyBMR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1E1C; --panel:#16302B; --panel-2:#1E3B34;
+    --paper:#E9E3D3; --line: rgba(233,227,211,0.14);
+    --teal:#2FA88A; --text:#EDEAE0; --text-dim:#A9B8B3; --danger:#C4472B;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--text);font-family:'IBM Plex Sans',sans-serif;line-height:1.5;}
+  header{
+    padding:60px 22px 40px; text-align:center;
+    background:linear-gradient(180deg, var(--panel) 0%, var(--ink) 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:42px;margin:8px 0 12px;}
+  h1 span{color:var(--teal);}
+  .tagline{color:var(--text-dim);max-width:520px;margin:0 auto;font-size:15px;}
+
+  #crisisbar{
+    display:flex; gap:16px; flex-wrap:wrap; align-items:center; justify-content:center;
+    margin:22px auto 0; padding:10px 16px; border-radius:3px; max-width:480px;
+    background:rgba(196,71,43,0.12); border:1px solid var(--danger);
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+  }
+  #crisisbar a{color:var(--paper); font-weight:600; text-decoration:none; border-bottom:1px dotted var(--paper);}
+
+  main{max-width:880px; margin:0 auto; padding:50px 20px 80px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:18px;}
+  .card{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:6px;
+    padding:24px; text-decoration:none; color:var(--text); display:block;
+    transition:border-color .15s, transform .15s;
+  }
+  .card:hover{ border-color:var(--teal); transform:translateY(-2px); }
+  .card .code{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--teal); text-transform:uppercase; letter-spacing:0.1em;}
+  .card h2{font-family:'Space Grotesk',sans-serif; font-size:19px; margin:8px 0 8px;}
+  .card p{font-size:13px; color:var(--text-dim); margin:0;}
+  .card.disabled{ opacity:0.45; pointer-events:none; }
+  .section-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--text-dim); margin:44px 0 14px;
+  }
+  footer{
+    text-align:center; padding:30px 20px; border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim);
+  }
+</style>
+</head>
+<body>
+<header>
+  <span class="eyebrow">Bangkok Metropolitan Region</span>
+  <h1>Z<span>Safety</span>BMR</h1>
+  <p class="tagline">Mapping environmental and safety factors relevant to adolescent mental health across Bangkok, Nonthaburi, Pathum Thani, Samut Prakan, Nakhon Pathom, and Samut Sakhon.</p>
+  <div id="crisisbar">
+    <b>Need help now?</b>
+    <span>Mental health hotline <a href="tel:1323">1323</a> (24 hr)</span>
+    <span>Emergency <a href="tel:1669">1669</a></span>
+  </div>
+</header>
+
+<main>
+  <div class="section-label">Explore</div>
+  <div class="grid">
+    <a class="card" href="./zsafetybmr_map_prototype.html">
+      <div class="code">01 — Map</div>
+      <h2>Safety Map</h2>
+      <p>Layered map of districts, green spaces, and safety-relevant places across the six provinces.</p>
+    </a>
+    <a class="card" href="./zsafetybmr_questionnaires.html">
+      <div class="code">02 — Self-check</div>
+      <h2>Screening Tools</h2>
+      <p>2Q, 9Q, and 8Q self-reflection questionnaires, with results shown instantly and never stored.</p>
+    </a>
+    <div class="card disabled">
+      <div class="code">03 — Coming soon</div>
+      <h2>OCEAN &amp; Dark Tetrad</h2>
+      <p>Personality trait self-assessments — in progress.</p>
+    </div>
+    <div class="card disabled">
+      <div class="code">04 — Coming soon</div>
+      <h2>Report Something</h2>
+      <p>Anonymous submission form — in progress.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  ZSafetyBMR — a self-reflection and community-safety resource. Not a substitute for professional care.
+</footer>
+</body>
+</html>
