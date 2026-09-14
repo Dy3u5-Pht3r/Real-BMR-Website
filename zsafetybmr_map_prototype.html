@@ -69,7 +69,7 @@
   #main{position:relative;flex:1;min-height:0;}
   #map{position:absolute;inset:0;background:var(--ink);}
 
-  .leaflet-tile{filter:saturate(0.55) brightness(0.85) contrast(1.05) hue-rotate(-6deg);}
+  .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.6);}
 
   /* --- layer stack: signature element, film-strip tabs on the right --- */
   #layerstack{
@@ -271,8 +271,8 @@
 // ---------- map setup ----------
 const map = L.map('map', {zoomControl:false});
 L.control.zoom({position:'bottomright'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom:19, attribution:'&copy; OpenStreetMap contributors'
 }).addTo(map);
 
 // Bangkok Metropolitan Region — six provinces
