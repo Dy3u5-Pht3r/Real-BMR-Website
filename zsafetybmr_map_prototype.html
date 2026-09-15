@@ -302,8 +302,8 @@ map.fitBounds(bmrBounds, {padding:[60,60]});
 
 async function initData(){
   const [districtGeojson, parksCompact] = await Promise.all([
-    fetch('data/districts.geojson').then(r => r.json()),
-    fetch('data/parks.json').then(r => r.json())
+    fetch('districts.geojson').then(r => r.json()),
+    fetch('parks.json').then(r => r.json())
   ]);
 
 // ---------- BASE LAYER: real district boundaries ----------
