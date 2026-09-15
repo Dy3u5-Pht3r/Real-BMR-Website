@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZSafetyBMR — Map Prototype</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -126,61 +125,17 @@
     color:var(--text-dim);
   }
 
-  /* bottom-left stack: draw tool above legend, always aligned */
-  #bottomleft-stack{
-    position:absolute; bottom:16px; left:16px; z-index:800;
-    display:flex; flex-direction:column; gap:8px; align-items:flex-start;
-    max-width:80vw;
-  }
+  /* legend footer */
   #legend{
+    position:absolute; bottom:16px; left:16px; z-index:800;
     background:rgba(22,48,43,0.94);backdrop-filter:blur(6px);
     border:1px solid var(--line);border-radius:2px;
     padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
-    color:var(--text-dim);display:flex;gap:16px;flex-wrap:wrap;
+    color:var(--text-dim);display:flex;gap:16px;flex-wrap:wrap;max-width:80vw;
   }
   #legend div{display:flex;align-items:center;gap:6px;}
   #legend .dot{width:9px;height:9px;border-radius:50%;}
   #legend .box{width:10px;height:10px;border-radius:2px;opacity:0.75;}
-
-  /* freehand draw tool — sits directly above the legend, bottom-left */
-  #drawtool{
-    background:rgba(22,48,43,0.94); backdrop-filter:blur(6px);
-    border:1px solid var(--line); border-radius:2px;
-    padding:8px 10px; display:flex; align-items:center; gap:10px;
-    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim);
-  }
-  #drawtool button{
-    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12px;
-    background:var(--teal); color:var(--ink); border:none; padding:6px 12px;
-    border-radius:2px; cursor:pointer;
-  }
-  #drawtool button.active{ background:var(--paper); }
-  #drawtool button.cancel{ background:transparent; color:var(--text-dim); border:1px solid var(--line); display:none; }
-  #drawtool button.cancel.show{ display:inline-block; }
-
-  #zonetag-modal{
-    position:absolute; inset:0; z-index:1000; display:none;
-    align-items:center; justify-content:center;
-    background:rgba(15,30,28,0.6); backdrop-filter:blur(2px);
-  }
-  #zonetag-modal.show{ display:flex; }
-  #zonetag-card{
-    background:var(--panel-2); border:1px solid var(--line); border-radius:4px;
-    padding:20px; width:280px; font-family:'IBM Plex Sans',sans-serif;
-  }
-  #zonetag-card h3{ font-family:'Space Grotesk',sans-serif; font-size:15px; margin:0 0 12px; }
-  #zonetag-card label{ display:block; font-size:11.5px; color:var(--text-dim); margin:10px 0 4px; }
-  #zonetag-card input[type=text], #zonetag-card select{
-    width:100%; padding:7px 8px; background:rgba(233,227,211,0.06);
-    border:1px solid var(--line); border-radius:2px; color:var(--text); font-size:13px;
-  }
-  #zonetag-card .row{ display:flex; gap:8px; margin-top:16px; }
-  #zonetag-card button{
-    flex:1; padding:8px; border-radius:2px; border:none; cursor:pointer;
-    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12.5px;
-  }
-  #zonetag-card .save{ background:var(--teal); color:var(--ink); }
-  #zonetag-card .discard{ background:transparent; color:var(--text-dim); border:1px solid var(--line); }
 
   #databadge{
     position:absolute;top:16px;left:16px;z-index:800;
@@ -233,40 +188,10 @@
     <div id="map"></div>
     <div id="databadge">SAMPLE DATA — for prototyping map interaction only</div>
     <div id="layerstack"></div>
-    <div id="bottomleft-stack">
-      <div id="drawtool">
-        <button id="drawBtn">+ Draw zone</button>
-        <button id="editBtn">Edit</button>
-        <button id="deleteBtn">Delete</button>
-        <button id="doneBtn" class="cancel">Done</button>
-        <button id="cancelBtn" class="cancel">Cancel</button>
-        <span id="drawHint">click points, double-click to finish</span>
-      </div>
-      <div id="legend"></div>
-    </div>
-
-    <div id="zonetag-modal">
-      <div id="zonetag-card">
-        <h3>New zone</h3>
-        <label>Name</label>
-        <input type="text" id="zoneName" placeholder="e.g. Ban Khrua community">
-        <label>Category</label>
-        <select id="zoneCategory">
-          <option value="slum">Informal settlement</option>
-          <option value="recreation">Recreation</option>
-          <option value="green">Green space</option>
-          <option value="custom">Custom</option>
-        </select>
-        <div class="row">
-          <button class="discard" id="discardZone">Discard</button>
-          <button class="save" id="saveZone">Save</button>
-        </div>
-      </div>
-    </div>
+    <div id="legend"></div>
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 <script>
 // ---------- map setup ----------
 const map = L.map('map', {zoomControl:false});
@@ -332,14 +257,6 @@ const districtLayer = L.geoJSON(districtGeojson, {
 
 // ---------- SAMPLE DATA (placeholder only) ----------
 
-// Dataset 1a: zones (coloured shapes) — slum/recreation still placeholder, pending manual drawing or a real source
-const zones = [
-  {name:'Sample Informal Settlement Zone', type:'slum', color:'#B08840',
-   coords:[[13.706,100.575],[13.710,100.582],[13.703,100.586],[13.699,100.578]]},
-  {name:'Sample Recreation Zone', type:'recreation', color:'#4C86B0',
-   coords:[[13.793,100.552],[13.797,100.560],[13.790,100.565],[13.786,100.556]]}
-];
-
 // Dataset 1b: point amenities
 const amenities = [
   {name:'Sample Public Library', kind:'library', lat:13.7466, lng:100.5347},
@@ -371,14 +288,6 @@ parksCompact.forEach(p=>{
   L.polygon(ring, { color: PARK_TAG_COLOR[p.t] || '#3FA07E', weight:1, fillColor: PARK_TAG_COLOR[p.t] || '#3FA07E', fillOpacity:0.32 })
     .bindPopup(`<span class="pop-eyebrow">${PARK_TAG_LABEL[p.t] || p.t}</span><p class="pop-title">Green space</p>`)
     .addTo(parkLayer);
-});
-
-// ---------- layers ----------
-const zoneLayer = L.layerGroup();
-zones.forEach(z=>{
-  L.polygon(z.coords, {color:z.color, weight:1.5, fillOpacity:0.28})
-    .bindPopup(`<span class="pop-eyebrow">Zone · ${z.type}</span><p class="pop-title">${z.name}</p><p class="pop-body">Environmental factor layer. Sample geometry.</p>`)
-    .addTo(zoneLayer);
 });
 
 function dotIcon(color){
@@ -460,143 +369,6 @@ document.getElementById('legend').innerHTML = `
   <div><span class="dot" style="background:#8A5A3B"></span>school / safety</div>
 `;
 
-// ---------- freehand polygon drawing tool ----------
-const customZoneLayer = L.featureGroup().addTo(map);
-const ZONE_CATEGORY_COLOR = { slum:'#B08840', recreation:'#4C86B0', green:'#3FA07E', custom:'#C4472B' };
-const ZONE_CATEGORY_LABEL = { slum:'Informal settlement', recreation:'Recreation', green:'Green space', custom:'Custom' };
-
-let drawHandler = null;
-let editHandler = null;
-let deleteHandler = null;
-let pendingLayer = null;
-let mode = null; // null | 'draw' | 'edit' | 'delete'
-
-const drawBtn = document.getElementById('drawBtn');
-const editBtn = document.getElementById('editBtn');
-const deleteBtn = document.getElementById('deleteBtn');
-const doneBtn = document.getElementById('doneBtn');
-const cancelBtn = document.getElementById('cancelBtn');
-const drawHint = document.getElementById('drawHint');
-const modal = document.getElementById('zonetag-modal');
-
-const HINTS = {
-  null: 'click a tool to start',
-  draw: 'click points, double-click to finish',
-  edit: 'drag any point, then Done to save',
-  delete: 'click a shape to mark it, then Done to confirm'
-};
-
-function resetToolbar(){
-  [drawBtn, editBtn, deleteBtn].forEach(b => b.classList.remove('active'));
-  doneBtn.classList.remove('show');
-  cancelBtn.classList.remove('show');
-  drawBtn.textContent = '+ Draw zone';
-  drawHint.textContent = HINTS[null];
-  mode = null;
-}
-
-function exitCurrentMode(commit){
-  if(mode === 'draw' && drawHandler){ drawHandler.disable(); drawHandler = null; }
-  if(mode === 'edit' && editHandler){ commit ? editHandler.save() : editHandler.revertLayers(); editHandler.disable(); editHandler = null; }
-  if(mode === 'delete' && deleteHandler){ commit ? deleteHandler.save() : deleteHandler.revertLayers(); deleteHandler.disable(); deleteHandler = null; }
-  resetToolbar();
-}
-
-drawBtn.addEventListener('click', ()=>{
-  if(mode === 'draw'){ exitCurrentMode(false); return; }
-  exitCurrentMode(false);
-  mode = 'draw';
-  drawHandler = new L.Draw.Polygon(map, {
-    shapeOptions: { color:'#E9E3D3', weight:2, fillOpacity:0.15 },
-    allowIntersection: true, showArea: false
-  });
-  drawHandler.enable();
-  drawBtn.classList.add('active'); drawBtn.textContent = 'Drawing…';
-  cancelBtn.classList.add('show');
-  drawHint.textContent = HINTS.draw;
-});
-
-editBtn.addEventListener('click', ()=>{
-  if(mode === 'edit'){ exitCurrentMode(true); return; }
-  if(customZoneLayer.getLayers().length === 0){ return; }
-  exitCurrentMode(false);
-  mode = 'edit';
-  editHandler = new L.EditToolbar.Edit(map, { featureGroup: customZoneLayer });
-  editHandler.enable();
-  editBtn.classList.add('active');
-  doneBtn.classList.add('show'); cancelBtn.classList.add('show');
-  drawHint.textContent = HINTS.edit;
-});
-
-deleteBtn.addEventListener('click', ()=>{
-  if(mode === 'delete'){ exitCurrentMode(true); return; }
-  if(customZoneLayer.getLayers().length === 0){ return; }
-  exitCurrentMode(false);
-  mode = 'delete';
-  deleteHandler = new L.EditToolbar.Delete(map, { featureGroup: customZoneLayer });
-  deleteHandler.enable();
-  deleteBtn.classList.add('active');
-  doneBtn.classList.add('show'); cancelBtn.classList.add('show');
-  drawHint.textContent = HINTS.delete;
-});
-
-doneBtn.addEventListener('click', ()=> exitCurrentMode(true));
-cancelBtn.addEventListener('click', ()=> exitCurrentMode(false));
-
-map.on(L.Draw.Event.CREATED, (e)=>{
-  pendingLayer = e.layer;
-  exitCurrentMode(false);
-  document.getElementById('zoneName').value = '';
-  document.getElementById('zoneCategory').value = 'slum';
-  modal.classList.add('show');
-});
-
-document.getElementById('discardZone').addEventListener('click', ()=>{
-  pendingLayer = null;
-  modal.classList.remove('show');
-});
-
-document.getElementById('saveZone').addEventListener('click', ()=>{
-  const name = document.getElementById('zoneName').value.trim() || 'Untitled zone';
-  const cat = document.getElementById('zoneCategory').value;
-  const color = ZONE_CATEGORY_COLOR[cat];
-  if(pendingLayer){
-    pendingLayer.setStyle({ color: color, weight:1.5, fillColor: color, fillOpacity:0.28 });
-    pendingLayer.bindPopup(`<span class="pop-eyebrow">${ZONE_CATEGORY_LABEL[cat]} · hand-drawn</span><p class="pop-title">${name}</p>`);
-    pendingLayer.addTo(customZoneLayer);
-  }
-  pendingLayer = null;
-  modal.classList.remove('show');
-});
-
-// register the custom-drawn layer in the layer stack so it can be toggled too
-(function registerCustomZoneLayer(){
-  const cfg = {id:'customzones', title:'Hand-drawn zones', code:'DS-1A-ADMIN', color:'#E9E3D3', layer:customZoneLayer, on:true,
-    chips:['drawn on this device']};
-  const el = document.createElement('div');
-  el.className = 'film on';
-  el.style.setProperty('--sheet-color', cfg.color);
-  el.innerHTML = `
-    <div class="film-head">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div class="swatch" style="background:${cfg.color}"></div>
-        <div class="film-title">${cfg.title}</div>
-      </div>
-      <div class="toggle"></div>
-    </div>
-    <div class="film-sub">
-      <span class="film-code">${cfg.code}</span>
-      ${cfg.chips.map(c=>`<span class="chip">${c}</span>`).join('')}
-    </div>
-  `;
-  let on = true;
-  el.addEventListener('click', ()=>{
-    on = !on;
-    el.classList.toggle('on', on);
-    if(on){ cfg.layer.addTo(map); } else { map.removeLayer(cfg.layer); }
-  });
-  document.getElementById('layerstack').appendChild(el);
-})();
 
 } // end initData
 initData();
