@@ -251,6 +251,41 @@ const districtLayer = L.geoJSON(districtGeojson, {
   })
 });
 
+// ---------- zoom-based scaling: everything shrinks toward the horizon as you zoom out ----------
+// 20px is the size at DOT_REF_ZOOM (fully zoomed in); it shrinks geometrically per zoom level out.
+const DOT_MAX_RADIUS = 20;
+const DOT_REF_ZOOM = 19;
+const DOT_MIN_RADIUS = 0.3;
+const BORDER_MAX_WEIGHT = 2.5;
+const BORDER_MIN_WEIGHT = 0.15;
+function radiusForZoom(z){
+  return Math.max(DOT_MIN_RADIUS, DOT_MAX_RADIUS * Math.pow(1.4, z - DOT_REF_ZOOM));
+}
+function borderWeightForZoom(z){
+  return Math.max(BORDER_MIN_WEIGHT, BORDER_MAX_WEIGHT * Math.pow(1.4, z - DOT_REF_ZOOM));
+}
+
+const scalableDots = [];      // circleMarkers — radius scales
+const scalablePolyBorders = []; // polygons (category + district) — border weight scales
+const scalablePins = [];      // divIcon pins — icon size scales
+
+districtLayer.eachLayer(l => scalablePolyBorders.push(l));
+
+function applyZoomScaling(){
+  const z = map.getZoom();
+  const r = radiusForZoom(z);
+  const w = borderWeightForZoom(z);
+  scalableDots.forEach(m => m.setRadius(r));
+  scalablePolyBorders.forEach(l => l.setStyle({weight: w}));
+  scalablePins.forEach(({marker, color}) => {
+    const px = Math.max(4, Math.min(28, r * 1.4));
+    marker.setIcon(L.divIcon({
+      className:'', html:`<div class="pin-icon" style="background:${color}"></div>`,
+      iconSize:[px,px], iconAnchor:[px/2, px]
+    }));
+  });
+}
+
 // ---------- generic renderer for point+polygon compact datasets ----------
 const catRenderer = L.canvas({ padding: 0.5 });
 function buildCategoryLayer(items, color, labelPrefix){
@@ -260,16 +295,18 @@ function buildCategoryLayer(items, color, labelPrefix){
     const popup = `<span class="pop-eyebrow">${labelPrefix} · ${item.t}</span><p class="pop-title">${title}</p>`;
     if(item.p === 'pt'){
       const [lng, lat] = item.c;
-      L.circleMarker([lat, lng], {
-        renderer: catRenderer, radius:2.5, color: color, weight:1,
+      const m = L.circleMarker([lat, lng], {
+        renderer: catRenderer, radius:DOT_MAX_RADIUS, color: color, weight:1,
         fillColor: color, fillOpacity:0.85
       }).bindPopup(popup).addTo(layer);
+      scalableDots.push(m);
     } else if(item.p === 'pg'){
       const ring = item.c.map(([lng,lat]) => [lat,lng]);
-      L.polygon(ring, {
-        renderer: catRenderer, color: color, weight:1,
+      const p = L.polygon(ring, {
+        renderer: catRenderer, color: color, weight:BORDER_MAX_WEIGHT,
         fillColor: color, fillOpacity:0.25
       }).bindPopup(popup).addTo(layer);
+      scalablePolyBorders.push(p);
     }
   });
   return layer;
@@ -313,25 +350,31 @@ function dotIcon(color){
 const amenityLayer = L.layerGroup();
 const amenityColor = {library:'#2FA88A', clinic:'#C97A4A', police:'#5A7FC9'};
 amenities.forEach(a=>{
-  L.marker([a.lat,a.lng], {icon:dotIcon(amenityColor[a.kind])})
+  const marker = L.marker([a.lat,a.lng], {icon:dotIcon(amenityColor[a.kind])})
     .bindPopup(`<span class="pop-eyebrow">${a.kind}</span><p class="pop-title">${a.name}</p>`)
     .addTo(amenityLayer);
+  scalablePins.push({marker, color: amenityColor[a.kind]});
 });
 
 const submissionLayer = L.layerGroup();
 submissions.forEach(s=>{
-  L.marker([s.lat,s.lng], {icon:dotIcon('#4A4A4A')})
+  const marker = L.marker([s.lat,s.lng], {icon:dotIcon('#4A4A4A')})
     .bindPopup(`<span class="pop-eyebrow">Anonymous submission</span><p class="pop-title">${s.place}</p><p class="pop-body">${s.note}</p>`)
     .addTo(submissionLayer);
+  scalablePins.push({marker, color: '#4A4A4A'});
 });
 
 const safetyLayer = L.layerGroup();
 safetySites.forEach(s=>{
-  L.marker([s.lat,s.lng], {icon:dotIcon('#8A5A3B')})
+  const marker = L.marker([s.lat,s.lng], {icon:dotIcon('#8A5A3B')})
     .bindPopup(`<span class="pop-eyebrow">School safety profile</span><p class="pop-title">${s.name}</p>
       <p class="pop-body">Teacher:student — ${s.ratio}<br>School psychologist — ${s.psychologist}<br>Street lighting — ${s.lighting}<br>CCTV — ${s.cctv}</p>`)
     .addTo(safetyLayer);
+  scalablePins.push({marker, color: '#8A5A3B'});
 });
+
+applyZoomScaling();
+map.on('zoomend', applyZoomScaling);
 
 // ---------- layer stack UI (signature element) ----------
 const layerConfig = [
