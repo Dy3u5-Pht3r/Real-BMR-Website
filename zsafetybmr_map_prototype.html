@@ -226,12 +226,13 @@ const bmrBounds = L.latLngBounds(bmrProvinces.map(p=>[p.lat,p.lng]));
 map.fitBounds(bmrBounds, {padding:[60,60]});
 
 async function initData(){
-  const [districtGeojson, educationData, emergencyJusticeData, greenPublicData, transportationData] = await Promise.all([
+  const [districtGeojson, educationData, emergencyJusticeData, greenPublicData, transportationData, religiousData] = await Promise.all([
     fetch('districts.geojson').then(r => r.json()),
     fetch('education.json').then(r => r.json()),
     fetch('emergency_justice.json').then(r => r.json()),
     fetch('green_public.json').then(r => r.json()),
-    fetch('transportation.json').then(r => r.json())
+    fetch('transportation.json').then(r => r.json()),
+    fetch('religious.json').then(r => r.json())
   ]);
 
 // ---------- BASE LAYER: real district boundaries ----------
@@ -278,6 +279,7 @@ const educationLayer = buildCategoryLayer(educationData, '#E08A34', 'Education')
 const emergencyJusticeLayer = buildCategoryLayer(emergencyJusticeData, '#C4472B', 'Emergency & Justice');
 const greenPublicLayer = buildCategoryLayer(greenPublicData, '#3FA07E', 'Green & Public Space');
 const transportationLayer = buildCategoryLayer(transportationData, '#4697D2', 'Transportation');
+const religiousLayer = buildCategoryLayer(religiousData, '#E066A6', 'Religious building');
 
 // ---------- SAMPLE DATA (placeholder only) ----------
 
@@ -343,6 +345,8 @@ const layerConfig = [
    chips:['parks','libraries','sports','OSM']},
   {id:'transportation', title:'Transportation', code:'04', color:'#4697D2', layer:transportationLayer, on:true,
    chips:['stations','stops','terminals','OSM']},
+  {id:'religious', title:'Religious buildings', code:'05', color:'#E066A6', layer:religiousLayer, on:true,
+   chips:['temples','mosques','churches','OSM']},
   {id:'amenities', title:'Public amenities (sample)', code:'DS-1B', color:'#2FA88A', layer:amenityLayer, on:false,
    chips:['library','clinic','police']},
   {id:'submissions', title:'Anonymous submissions', code:'DS-2', color:'#4A4A4A', layer:submissionLayer, on:true,
@@ -384,6 +388,7 @@ document.getElementById('legend').innerHTML = `
   <div><span class="box" style="background:#C4472B"></span>emergency & justice</div>
   <div><span class="box" style="background:#3FA07E"></span>green & public space</div>
   <div><span class="box" style="background:#4697D2"></span>transportation</div>
+  <div><span class="box" style="background:#E066A6"></span>religious buildings</div>
   <div><span class="dot" style="background:#4A4A4A"></span>anonymous submission</div>
   <div><span class="dot" style="background:#8A5A3B"></span>school / safety (sample)</div>
 `;
