@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Haroon Mosque",
+        "established": 1837,
+        "district": "Bang Rak",
+        "notes": "One of Bangkok's oldest mosques, located in the Haroon riverside community.",
+        "verified": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [100.51450, 13.72553]
+      }
+    }
+  ]
+}
